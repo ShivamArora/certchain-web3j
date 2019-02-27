@@ -46,7 +46,7 @@ public class UserCredentials {
         System.out.println("Creation Time Password: "+password);
         System.out.println("Wallet File Source: "+location);
         try {
-            walletFileName = WalletUtils.generateNewWalletFile(password, location.toFile(), true);
+            walletFileName = WalletUtils.generateNewWalletFile(password, location.toFile(), false);
             System.out.println("Generated File Name: " + walletFileName);
         } catch (CipherException e) {
             e.printStackTrace();
