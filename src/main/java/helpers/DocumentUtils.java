@@ -47,8 +47,12 @@ public class DocumentUtils {
         }
     }
 
-    public static void setUserCredentials(UserCredentials userCredentials){
+    public static void setUserCredentials(Web3Instance web3Instance, UserCredentials userCredentials,String contractAddress){
+        web3j = web3Instance.getWeb3j();
         credentials = userCredentials.getCredentials();
+        cAddress = contractAddress;
+        helper = DocumentHelper.load(cAddress,web3j,credentials,new DefaultGasProvider());
+        documentUtils = new DocumentUtils();
     }
 
 
