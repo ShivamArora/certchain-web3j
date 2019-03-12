@@ -23,7 +23,7 @@ public class EtherUtils {
 
     public static EtherUtils init(Web3Instance web3Instance, UserCredentials userCredentials, String contractAddress){
         web3j = web3Instance.getWeb3j();
-        credentials = userCredentials.getCredentials();
+        credentials = userCredentials.getOwnerCredentials();
         cAddress = contractAddress;
         etherUtils = new EtherUtils();
         return etherUtils;

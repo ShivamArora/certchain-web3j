@@ -98,7 +98,7 @@ public class Web3Instance {
     public String deployContract(UserCredentials userCredentials){
         String address = "";
         try {
-            DocumentHelper helper = DocumentHelper.deploy(web3j,userCredentials.getCredentials(), new DefaultGasProvider()).send();
+            DocumentHelper helper = DocumentHelper.deploy(web3j,userCredentials.getOwnerCredentials(), new DefaultGasProvider()).send();
             address= helper.getContractAddress();
             System.out.println("Contract Address: "+address);
         } catch (Exception e) {

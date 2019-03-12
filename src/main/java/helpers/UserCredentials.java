@@ -64,7 +64,11 @@ public class UserCredentials {
         return walletFileName;
     }
 
-    public Credentials getCredentials() {
+    public Credentials getOwnerCredentials() {
+        return ownerCredentials;
+    }
+
+    private Credentials getCredentials(){
         return credentials;
     }
 

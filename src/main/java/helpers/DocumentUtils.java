@@ -31,7 +31,7 @@ public class DocumentUtils {
 
     public static DocumentUtils init(Web3Instance web3Instance, UserCredentials userCredentials, String contractAddress){
         web3j = web3Instance.getWeb3j();
-        credentials = userCredentials.getCredentials();
+        credentials = userCredentials.getOwnerCredentials();
         cAddress = contractAddress;
         helper = DocumentHelper.load(cAddress,web3j,credentials,new DefaultGasProvider());
         documentUtils = new DocumentUtils();
