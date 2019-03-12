@@ -47,6 +47,10 @@ public class DocumentUtils {
         }
     }
 
+    public static void setUserCredentials(UserCredentials userCredentials){
+        credentials = userCredentials.getCredentials();
+    }
+
 
     public Document searchByDocumentHash(String docHash){
         Document document = new Document();

@@ -68,7 +68,7 @@ public class UserCredentials {
         return ownerCredentials;
     }
 
-    private Credentials getCredentials(){
+    public Credentials getCredentials(){
         return credentials;
     }
 
