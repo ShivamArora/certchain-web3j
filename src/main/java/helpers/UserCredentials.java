@@ -20,12 +20,14 @@ import java.security.NoSuchProviderException;
 
 public class UserCredentials {
     private static UserCredentials userCredentials;
+    private static UserCredentials ownerUserCredentials;
     private static Credentials credentials;
+    private static Credentials ownerCredentials;
 
-    public static UserCredentials load(String privateKey) {
-        credentials = Credentials.create(privateKey);
-        userCredentials = new UserCredentials();
-        return userCredentials;
+    public static UserCredentials loadOwner(String privateKey) {
+        ownerCredentials = Credentials.create(privateKey);
+        ownerUserCredentials = new UserCredentials();
+        return ownerUserCredentials;
     }
 
     public static UserCredentials load(String password, File walletFile) {
@@ -80,4 +82,8 @@ public class UserCredentials {
         credentials = uc.getCredentials();
     }
 
+
+    public String getOwnerPublicAddress(){
+        return ownerCredentials.getAddress();
+    }
 }
