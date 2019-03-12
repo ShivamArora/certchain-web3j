@@ -31,7 +31,7 @@ public class UserCredentials {
     public static UserCredentials load(String password, File walletFile) {
         try {
             credentials = WalletUtils.loadCredentials(password, walletFile);
-            System.out.println("Address: "+credentials.getAddress());
+            System.out.println("Loaded Address: "+credentials.getAddress());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CipherException e) {
@@ -71,6 +71,7 @@ public class UserCredentials {
     }
 
     public static UserCredentials getCurrentUserCredentials(){
+        System.out.println("Current User Address: "+userCredentials.getPublicAddress());
         return userCredentials;
     }
 
