@@ -75,8 +75,8 @@ public class DocumentUtils {
         document.setTitle(result.getValue2());
         document.setUrl(result.getValue3());
         document.setDescription(result.getValue4());
-        document.setIssuer(new Entity(null,null,null,result.getValue5()));
-        document.setReceiver(new Entity(null,null,null,result.getValue6()));
+        document.setIssuer(new Entity(null,null,null,result.getValue5(),null));
+        document.setReceiver(new Entity(null,null,null,result.getValue6(),null));
 
         return document;
     }

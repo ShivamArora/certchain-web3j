@@ -10,4 +10,5 @@ public class Entity {
     private String website;
     private String address;
     private String blockchainAddress;
+    private String username;
 }
