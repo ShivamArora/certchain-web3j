@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class DocumentUtils {
@@ -82,41 +83,62 @@ public class DocumentUtils {
     }
 
     public String createDocument(Document document) throws InsufficientFundsException {
-        TransactionReceipt receipt = null;
+        CompletableFuture<TransactionReceipt> receipt = null;
         System.out.println("Uploader Address: "+credentials.getAddress());
-        try {
-            receipt = helper.createDocument(document.getHash(),document.getTitle(),document.getUrl(),document.getDescription()).sendAsync().get();
-            return receipt.getTransactionHash();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            if(e.getMessage().contains("insufficient funds"))
-                throw new InsufficientFundsException();
-        }
-        catch (RuntimeException e) {
-            e.printStackTrace();
-            if(e.getMessage().contains("insufficient funds"))
-                throw new InsufficientFundsException();
-        }
-        return "";
+        final String[] result = new String[1];
+        //try {
+            receipt = helper.createDocument(document.getHash(),document.getTitle(),document.getUrl(),document.getDescription()).sendAsync();
+            receipt.thenAccept(transactionReceipt -> {
+                result[0] = transactionReceipt.getTransactionHash();
+                System.out.println("Transaction Hash for Upload: "+result[0]);
+            }).exceptionally(transactionReceipt->{
+                String failureMessage = "Failed to mine!";
+                System.out.println("Transaction Hash for Upload: "+failureMessage);
+                return null;
+            });
+            return result[0];
+            //return receipt.getTransactionHash();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//            if(e.getMessage().contains("insufficient funds"))
+//                throw new InsufficientFundsException();
+//        }
+//        catch (RuntimeException e) {
+//            e.printStackTrace();
+//            if(e.getMessage().contains("insufficient funds"))
+//                throw new InsufficientFundsException();
+//        }
+        //return "";
     }
 
     public String transferDocument(TransferContract transferContract){
-        TransactionReceipt receipt = null;
-        try{
+        CompletableFuture<TransactionReceipt> receipt = null;
+        final String[] result = new String[1];
+        //try{
             Long index = getIndexFromDocHash(transferContract.getDocHash());
             if(index != -1L) {
-                receipt = helper.transferDocument(credentials.getAddress(), transferContract.getRecipientAddress(), BigInteger.valueOf(index)).sendAsync().get();
-                return receipt.getTransactionHash();
+                receipt = helper.transferDocument(credentials.getAddress(), transferContract.getRecipientAddress(), BigInteger.valueOf(index)).sendAsync();
+                receipt.thenAccept(transactionReceipt -> {
+                    result[0] = transactionReceipt.getTransactionHash();
+                    System.out.println("Transaction Hash for Issue: "+result[0]);
+                }).exceptionally(transactionReceipt->{
+                    result[0] = "Failed to mine!";
+                    System.out.println("Transaction Hash for Issue: "+result[0]);
+                    return null;
+                });
+                return result[0];
+        //        return receipt.getTransactionHash();
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return "Insufficient Funds to perform transaction.";
-        }
-        return "";
+            return "";
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//            return "Insufficient Funds to perform transaction.";
+//        }
+//        return "";
     }
 
     public List<Document> getDocumentsUnissued(String entityAddress){
