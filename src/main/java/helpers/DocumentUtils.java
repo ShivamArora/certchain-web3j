@@ -141,6 +141,24 @@ public class DocumentUtils {
 //        return "";
     }
 
+    public String createAndTransferDocument(Document document,TransferContract transferContract){
+        CompletableFuture<TransactionReceipt> receipt = null;
+        System.out.println("Uploader Address: "+credentials.getAddress());
+        final String[] result = new String[1];
+        //try {
+        receipt = helper.createDocument(document.getHash(),document.getTitle(),document.getUrl(),document.getDescription()).sendAsync();
+        receipt.thenAccept(transactionReceipt -> {
+            result[0] = transactionReceipt.getTransactionHash();
+            System.out.println("Transaction Hash for Upload: "+result[0]);
+            transferDocument(transferContract);
+        }).exceptionally(transactionReceipt->{
+            String failureMessage = "Failed to mine!";
+            System.out.println("Transaction Hash for Upload: "+failureMessage);
+            return null;
+        });
+        return result[0];
+    }
+
     public List<Document> getDocumentsUnissued(String entityAddress){
         List<BigInteger> resultList = new ArrayList<>();
         List<Document> documentList = new ArrayList<>();
