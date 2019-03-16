@@ -1,6 +1,7 @@
 package helpers;
 
 import exceptions.InsufficientFundsException;
+import listeners.OnMiningCompleteListener;
 import models.Document;
 import models.Entity;
 import models.TransferContract;
@@ -82,7 +83,7 @@ public class DocumentUtils {
         return document;
     }
 
-    public String createDocument(Document document) throws InsufficientFundsException {
+    public String createDocument(Document document, OnMiningCompleteListener onMiningCompleteListener) throws InsufficientFundsException {
         CompletableFuture<TransactionReceipt> receipt = null;
         System.out.println("Uploader Address: "+credentials.getAddress());
         final String[] result = new String[1];
@@ -91,9 +92,11 @@ public class DocumentUtils {
             receipt.thenAccept(transactionReceipt -> {
                 result[0] = transactionReceipt.getTransactionHash();
                 System.out.println("Transaction Hash for Upload: "+result[0]);
+                onMiningCompleteListener.onTransactionComplete(result[0],document.getHash());
             }).exceptionally(transactionReceipt->{
                 String failureMessage = "Failed to mine!";
                 System.out.println("Transaction Hash for Upload: "+failureMessage);
+                onMiningCompleteListener.onTransactionError(failureMessage);
                 return null;
             });
             return result[0];
@@ -113,7 +116,7 @@ public class DocumentUtils {
         //return "";
     }
 
-    public String transferDocument(TransferContract transferContract){
+    public String transferDocument(TransferContract transferContract, OnMiningCompleteListener onMiningCompleteListener){
         CompletableFuture<TransactionReceipt> receipt = null;
         final String[] result = new String[1];
         //try{
@@ -123,9 +126,11 @@ public class DocumentUtils {
                 receipt.thenAccept(transactionReceipt -> {
                     result[0] = transactionReceipt.getTransactionHash();
                     System.out.println("Transaction Hash for Issue: "+result[0]);
+                    onMiningCompleteListener.onTransactionComplete(result[0],transferContract.getDocHash());
                 }).exceptionally(transactionReceipt->{
                     result[0] = "Failed to mine!";
                     System.out.println("Transaction Hash for Issue: "+result[0]);
+                    onMiningCompleteListener.onTransactionError(result[0]);
                     return null;
                 });
                 return result[0];
@@ -141,7 +146,7 @@ public class DocumentUtils {
 //        return "";
     }
 
-    public String createAndTransferDocument(Document document,TransferContract transferContract){
+    public String createAndTransferDocument(Document document,TransferContract transferContract,OnMiningCompleteListener onMiningCompleteListener){
         CompletableFuture<TransactionReceipt> receipt = null;
         System.out.println("Uploader Address: "+credentials.getAddress());
         final String[] result = new String[1];
@@ -150,10 +155,12 @@ public class DocumentUtils {
         receipt.thenAccept(transactionReceipt -> {
             result[0] = transactionReceipt.getTransactionHash();
             System.out.println("Transaction Hash for Upload: "+result[0]);
-            transferDocument(transferContract);
+            onMiningCompleteListener.onTransactionComplete(result[0],document.getHash());
+            transferDocument(transferContract,onMiningCompleteListener);
         }).exceptionally(transactionReceipt->{
             String failureMessage = "Failed to mine!";
             System.out.println("Transaction Hash for Upload: "+failureMessage);
+            onMiningCompleteListener.onTransactionError(failureMessage);
             return null;
         });
         return result[0];
